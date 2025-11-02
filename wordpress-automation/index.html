@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automatización WordPress - Publicar desde Excel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 5px;
+        }
+
+        .info-box h3 {
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .info-box li {
+            color: #555;
+            font-size: 14px;
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .info-box li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .btn-publish {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-publish:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-publish:active {
+            transform: translateY(0);
+        }
+
+        .btn-publish:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .status.loading {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .instructions {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .instructions h4 {
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .instructions ol {
+            color: #856404;
+            font-size: 13px;
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin: 5px 0;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #999;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="icon">📝</div>
+            <h1>Publicar en WordPress</h1>
+            <p>Automatización desde archivo Excel</p>
+        </div>
+
+        <div class="info-box">
+            <h3>Campos que se publicarán:</h3>
+            <ul>
+                <li>Título de la publicación</li>
+                <li>Autor</li>
+                <li>Fecha de publicación</li>
+                <li>Extracto</li>
+                <li>Texto completo</li>
+                <li>Imagen destacada</li>
+                <li>Categoría</li>
+            </ul>
+        </div>
+
+        <div class="button-container">
+            <button id="btnPublicar" class="btn-publish" onclick="publicarEnWordPress()">
+                📤 Enviar Publicación
+            </button>
+        </div>
+
+        <div id="status" class="status"></div>
+
+        <div class="instructions">
+            <h4>📋 Instrucciones de uso:</h4>
+            <ol>
+                <li>Asegúrate de tener el archivo <strong>publicaciones.xlsx</strong> en la carpeta</li>
+                <li>Agrega una nueva fila con los datos de tu publicación</li>
+                <li>Haz clic en el botón <strong>"Enviar Publicación"</strong></li>
+                <li>Espera a que se complete el proceso</li>
+                <li>¡Tu publicación estará en WordPress!</li>
+            </ol>
+        </div>
+
+        <div class="footer">
+            <p>Automatización WordPress v1.0 | Desarrollado con ❤️</p>
+        </div>
+    </div>
+
+    <script>
+        async function publicarEnWordPress() {
+            const btn = document.getElementById('btnPublicar');
+            const status = document.getElementById('status');
+            
+            // Deshabilitar botón
+            btn.disabled = true;
+            
+            // Mostrar estado de carga
+            status.className = 'status loading';
+            status.innerHTML = '<div class="spinner"></div><p>Procesando publicación...</p><p>Por favor espera, esto puede tomar unos momentos.</p>';
+            
+            try {
+                // Llamar al script de Node.js
+                const response = await fetch('http://localhost:3001/publicar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    status.className = 'status success';
+                    status.innerHTML = `
+                        <p><strong>✅ ¡Publicación exitosa!</strong></p>
+                        <p>Tu contenido ha sido publicado en WordPress.</p>
+                        ${result.url ? `<p><a href="${result.url}" target="_blank">Ver publicación →</a></p>` : ''}
+                    `;
+                } else {
+                    throw new Error(result.error || 'Error desconocido');
+                }
+            } catch (error) {
+                status.className = 'status error';
+                status.innerHTML = `
+                    <p><strong>❌ Error al publicar</strong></p>
+                    <p>${error.message}</p>
+                    <p>Por favor verifica tu configuración y el archivo Excel.</p>
+                `;
+            } finally {
+                // Rehabilitar botón después de 3 segundos
+                setTimeout(() => {
+                    btn.disabled = false;
+                }, 3000);
+            }
+        }
+
+        // Mensaje de bienvenida en consola
+        console.log('%c🚀 Automatización WordPress', 'color: #667eea; font-size: 20px; font-weight: bold;');
+        console.log('%cSistema listo para publicar', 'color: #666; font-size: 14px;');
+    </script>
+</body>
+</html>

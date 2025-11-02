@@ -1,0 +1,28 @@
+# Dependencias
+node_modules/
+package-lock.json
+
+# Archivos de configuración con credenciales
+config.js
+
+# Archivos Excel (opcional, descomenta si no quieres versionar)
+# *.xlsx
+# *.xls
+
+# Imágenes (opcional)
+imagenes/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

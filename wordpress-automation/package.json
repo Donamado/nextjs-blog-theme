@@ -1,0 +1,27 @@
+{
+  "name": "wordpress-automation",
+  "version": "1.0.0",
+  "description": "Automatización para publicar en WordPress desde archivos Excel",
+  "main": "publicar-wordpress.js",
+  "scripts": {
+    "crear-excel": "node crear-excel-ejemplo.js",
+    "publicar": "node publicar-wordpress.js",
+    "publicar-todas": "node publicar-wordpress.js todas",
+    "servidor": "node servidor.js",
+    "start": "node servidor.js"
+  },
+  "keywords": [
+    "wordpress",
+    "automation",
+    "excel",
+    "publicacion",
+    "automatizacion"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "xlsx": "^0.18.5",
+    "axios": "^1.6.0",
+    "form-data": "^4.0.0"
+  }
+}
